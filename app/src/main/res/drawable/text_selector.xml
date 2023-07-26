@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true">
-        <shape>
-            <solid android:color="@color/light_blue" />
-            <!-- 四个角的弧度 -->
-            <corners
-                android:radius="10dp"/>
+  <item android:state_checked="true">
+    <shape>
+      <corners android:radius="10dp" />
+      <!-- 四个角的弧度 -->
+      <solid android:color="@color/light_blue" />
 
-            <stroke
-                android:width="0.5dp"
-                android:color="@color/light_gray" />
-        </shape>
-    </item>
-    <item android:state_checked="false">
-        <shape>
-            <solid android:color="@color/gray_light_6a" />
-            <!-- 四个角的弧度 -->
-            <corners
-                android:radius="10dp"/>
+      <stroke android:color="@color/light_gray" android:width="0.5dp" />
+    </shape>
+  </item>
+  <item android:state_checked="false">
+    <shape>
+      <corners android:radius="10dp" />
+      <!-- 四个角的弧度 -->
+      <solid android:color="@color/gray_light_6a" />
 
-            <stroke
-                android:width="0.5dp"
-                android:color="@color/gray_black" />
-        </shape>
-    </item>
+      <stroke android:color="@color/gray_black" android:width="0.5dp" />
+    </shape>
+  </item>
 </selector>

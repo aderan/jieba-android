@@ -1,1 +1,3 @@
-include ':app', ':jieba_android'
+rootProject.name = "jieba-android"
+include ':app'
+include ':library'

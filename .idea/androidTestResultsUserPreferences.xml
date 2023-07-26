@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidTestResultsUserPreferences">
+    <option name="androidTestResultsTableState">
+      <map>
+        <entry key="-1843362345">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="22528a9a" value="120" />
+                  <entry key="Duration" value="90" />
+                  <entry key="R52RA0BBDEX" value="120" />
+                  <entry key="Resizable_Experimental_API_34" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="Xiaomi&#10; 23043RP34C" value="120" />
+                  <entry key="samsung&#10; SM-P610" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-1279903644">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="22528a9a" value="120" />
+                  <entry key="Duration" value="90" />
+                  <entry key="Resizable_Experimental_API_34" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="Xiaomi&#10; 23043RP34C" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-954685808">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="22528a9a" value="120" />
+                  <entry key="Duration" value="90" />
+                  <entry key="Pixel_2_API_27" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="Xiaomi&#10; 23043RP34C" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1756054211">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Resizable_Experimental_API_34" value="120" />
+                  <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
