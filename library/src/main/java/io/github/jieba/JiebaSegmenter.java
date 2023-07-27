@@ -3,7 +3,6 @@ package io.github.jieba;
 import static io.github.jieba.Utility.LOGTAG;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -33,12 +32,15 @@ public class JiebaSegmenter {
     private JiebaSegmenter() {
     }
 
-    public void init(final Context context) {
+    public void init(Context context) {
+        init(new AndroidDictStreamFetcher(context));
+    }
+
+    public void init(final DictStreamFetcher fetcher) {
         // 初始化结巴分词,不会阻塞初始化进度，不管有没有完成，都继续，在调用的时候判断是否完成初始化，没完成则等待完成
         new Thread(new Runnable() {
             @Override
             public void run() {
-                DictStreamFetcher fetcher = new AndroidDictStreamFetcher(context);
                 finalSeg = FinalSeg.getInstance(fetcher);
                 wordDict = WordDictionary.getInstance(fetcher);
                 initReady = true;
@@ -57,13 +59,7 @@ public class JiebaSegmenter {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (!initReady) {
-                    try {
-                        Thread.sleep(SLEEP_TIME);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                waitForReady();
 
                 final ArrayList<String> dividedStrs = getDividedString(query);
 
@@ -79,13 +75,7 @@ public class JiebaSegmenter {
     }
 
     public ArrayList<String> getDividedString(String query) {
-        while (!initReady) {
-            try {
-                Thread.sleep(SLEEP_TIME);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        waitForReady();
 
         long start = System.currentTimeMillis();
 
@@ -104,13 +94,7 @@ public class JiebaSegmenter {
     }
 
     public List<SegToken> process(String query, SegMode mode) {
-        while (!initReady) {
-            try {
-                Thread.sleep(SLEEP_TIME);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        waitForReady();
 
         List<SegToken> tokens = new ArrayList<SegToken>();
         StringBuilder sb = new StringBuilder();
@@ -265,8 +249,9 @@ public class JiebaSegmenter {
 
     /*
      * 将句子切分成一个个词
+     * @Note: shown for test
      */
-    private List<String> sentenceProcess(String sentence) {
+    List<String> sentenceProcess(String sentence) {
         List<String> tokens = new ArrayList<String>();
         int N = sentence.length();
 
@@ -317,6 +302,17 @@ public class JiebaSegmenter {
 
         }
         return tokens;
+    }
+
+    // shown for test
+    void waitForReady() {
+        while (!initReady) {
+            try {
+                Thread.sleep(SLEEP_TIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public enum SegMode {

@@ -47,7 +47,7 @@ public class FinalSeg {
         return singleInstance;
     }
 
-    private void loadModel(DictStreamFetcher assetManager) {
+    private void loadModel(DictStreamFetcher fetcher) {
         long s = System.currentTimeMillis();
         prevStatus = new HashMap<Character, char[]>();
         prevStatus.put('B', new char[]{'E', 'S'});
@@ -82,15 +82,14 @@ public class FinalSeg {
         InputStream is = null;
 
         try {
-            is = assetManager.getProbStream();
+            is = fetcher.getProbStream();
 
             if (is == null) {
                 Log.e(LOGTAG, "Load prob_emit asset file error:");
                 return;
             }
 
-            BufferedReader br = new BufferedReader(
-                new InputStreamReader(is, StandardCharsets.UTF_8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             emit = new HashMap<Character, Map<Character, Double>>();
             Map<Character, Double> values = null;
             while (br.ready()) {

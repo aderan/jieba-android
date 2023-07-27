@@ -7,13 +7,11 @@ import java.io.InputStream;
 
 public class AndroidDictStreamFetcher implements DictStreamFetcher {
 
-    private static final String PROB_EMIT = "jieba/prob_emit.txt";
-
     private static final String MAIN_DICT = "jieba/dict.txt";
 
-    private static final String MAIN_PROCESSED = "dict_processed.txt";
+    private static final String PROCESSED_DICT = "jieba/dict_processed.txt";
 
-    private static final String OUTFILE = "jieba/" + MAIN_PROCESSED;
+    private static final String PROB_EMIT = "jieba/prob_emit.txt";
 
     private final AssetManager assetManager;
 
@@ -28,7 +26,7 @@ public class AndroidDictStreamFetcher implements DictStreamFetcher {
 
     @Override
     public InputStream getProcessedDictStream() throws IOException {
-        return assetManager.open(OUTFILE);
+        return assetManager.open(PROCESSED_DICT);
     }
 
     @Override

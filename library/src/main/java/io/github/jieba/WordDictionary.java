@@ -45,7 +45,7 @@ public class WordDictionary {
         // 加载字典树
         // 分两种情况：预处理和实际运行加载，预处理的时候执行preProcess函数，会将字典树生成中间文件存储到文本中
         // 实际运行的时候，直接从Asset加载文本文件通过restoreElement函数恢复成字典树
-        // preProcess(assetManager);
+        // preProcess(fetcher);
 
         // 实际运行的时候直接使用下面的代码加载该中间文件
         long start = System.currentTimeMillis();
@@ -347,16 +347,10 @@ public class WordDictionary {
 
             final int wordCnt = (strArray2.size() - 1) / 2;
 
-            // freqs.put操作需要3秒才能完成，所以放在一个线程中异步进行，在map加载完成之前调用分词会不那么准确，但是不会报错
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < wordCnt; i++) {
-                        freqs.put(strArray2.get(2 * i + 1),
-                            Double.valueOf(strArray2.get(2 * i + 2)));
-                    }
-                }
-            }).start();
+            // TODO freqs.put 操作需要3秒才能完成，所以放在一个线程中异步进行，在map加载完成之前调用分词会不那么准确，但是不会报错
+            for (int i = 0; i < wordCnt; i++) {
+                freqs.put(strArray2.get(2 * i + 1), Double.valueOf(strArray2.get(2 * i + 2)));
+            }
 
             br.close();
             is.close();
