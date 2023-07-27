@@ -14,6 +14,6 @@ public class MyApplication extends Application {
         super.onCreate();
 
         // 异步初始化
-        JiebaSegmenter.init(getApplicationContext());
+        JiebaSegmenter.getInstance().init(getApplicationContext());
     }
 }

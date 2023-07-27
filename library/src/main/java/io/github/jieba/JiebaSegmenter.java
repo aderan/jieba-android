@@ -19,53 +19,36 @@ public class JiebaSegmenter {
 
     private static final int SLEEP_TIME = 100;
 
-    private static volatile JiebaSegmenter jiebaSegmenterInstance;
+    private WordDictionary wordDict;
 
-    private static AssetManager assetManager;
+    private FinalSeg finalSeg;
 
-    private final WordDictionary wordDict;
+    private volatile boolean initReady;
 
-    private final FinalSeg finalSeg;
+    private static class Holder {
 
-    private final boolean initReady;
-
-    private JiebaSegmenter(AssetManager assetManager) {
-        finalSeg = FinalSeg.getInstance(assetManager);
-        wordDict = WordDictionary.getInstance(assetManager);
-
-        initReady = true;
+        private static final JiebaSegmenter INSTANCE = new JiebaSegmenter();
     }
 
-    public static void init(final Context context) {
+    private JiebaSegmenter() {
+    }
+
+    public void init(final Context context) {
         // 初始化结巴分词,不会阻塞初始化进度，不管有没有完成，都继续，在调用的时候判断是否完成初始化，没完成则等待完成
         new Thread(new Runnable() {
             @Override
             public void run() {
-                assetManager = context.getAssets();
-                JiebaSegmenter.getJiebaSegmenterSingleton();
+                DictStreamFetcher fetcher = new AndroidDictStreamFetcher(context);
+                finalSeg = FinalSeg.getInstance(fetcher);
+                wordDict = WordDictionary.getInstance(fetcher);
+                initReady = true;
                 Log.d(LOGTAG, "jieba init finished.");
             }
         }).start();
     }
 
-    public static JiebaSegmenter getJiebaSegmenterSingleton() {
-        if (assetManager == null) {
-            Log.e(LOGTAG, "Call init first!");
-            return null;
-        }
-        long start = System.currentTimeMillis();
-        if (null == jiebaSegmenterInstance) {
-            synchronized (JiebaSegmenter.class) {
-                if (null == jiebaSegmenterInstance) {
-                    jiebaSegmenterInstance = new JiebaSegmenter(assetManager);
-                }
-            }
-        }
-
-        long end = System.currentTimeMillis();
-        Log.d(LOGTAG, String.format("init complete takes:%d ms", end - start));
-
-        return jiebaSegmenterInstance;
+    public static JiebaSegmenter getInstance() {
+        return Holder.INSTANCE;
     }
 
     public void getDividedStringAsync(
@@ -281,13 +264,12 @@ public class JiebaSegmenter {
     }
 
     /*
-     *
+     * 将句子切分成一个个词
      */
     private List<String> sentenceProcess(String sentence) {
         List<String> tokens = new ArrayList<String>();
         int N = sentence.length();
 
-        long start = System.currentTimeMillis();
         // 将一段文字转换成有向无环图，该有向无环图包含了跟字典文件得出的所有可能的单词切分
         Map<Integer, List<Integer>> dag = createDAG(sentence);
 

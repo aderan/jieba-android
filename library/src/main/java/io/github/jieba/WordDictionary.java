@@ -2,7 +2,6 @@ package io.github.jieba;
 
 import static io.github.jieba.Utility.LOGTAG;
 
-import android.content.res.AssetManager;
 import android.os.Environment;
 import android.util.Log;
 import java.io.BufferedReader;
@@ -19,12 +18,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class WordDictionary {
-
-    private static final String MAIN_DICT = "jieba/dict.txt";
-
-    private static final String MAIN_PROCESSED = "dict_processed.txt";
-
-    private static final String OUTFILE = "jieba/" + MAIN_PROCESSED;
 
     private static WordDictionary singleton;
 
@@ -48,7 +41,7 @@ public class WordDictionary {
 
     private Double total = 0.0;
 
-    private WordDictionary(AssetManager assetManager) {
+    private WordDictionary(DictStreamFetcher fetcher) {
         // 加载字典树
         // 分两种情况：预处理和实际运行加载，预处理的时候执行preProcess函数，会将字典树生成中间文件存储到文本中
         // 实际运行的时候，直接从Asset加载文本文件通过restoreElement函数恢复成字典树
@@ -58,7 +51,7 @@ public class WordDictionary {
         long start = System.currentTimeMillis();
 
         // 加载字典文件
-        List<String> strArray = getStrArrayFromFile(assetManager);
+        List<String> strArray = getStrArrayFromFile(fetcher);
 
         if (strArray == null) {
             Log.d(LOGTAG, "getStrArrayFromFile failed, stop");
@@ -75,11 +68,11 @@ public class WordDictionary {
         Log.d(LOGTAG, String.format("restoreElement takes %d ms", end - start));
     }
 
-    public static WordDictionary getInstance(AssetManager assetManager) {
+    public static WordDictionary getInstance(DictStreamFetcher fetcher) {
         if (singleton == null) {
             synchronized (WordDictionary.class) {
                 if (singleton == null) {
-                    singleton = new WordDictionary(assetManager);
+                    singleton = new WordDictionary(fetcher);
                     return singleton;
                 }
             }
@@ -90,10 +83,10 @@ public class WordDictionary {
     /**
      * 预处理，生成中间文件
      *
-     * @param assetManager
+     * @param fetcher
      */
-    private void preProcess(AssetManager assetManager) {
-        boolean result = this.loadDict(assetManager);
+    private void preProcess(DictStreamFetcher fetcher) {
+        boolean result = loadDict(fetcher);
 
         if (result) {
             ArrayList<Element> arr = new ArrayList<>();
@@ -164,6 +157,8 @@ public class WordDictionary {
         restoreElement(newElemArray, strArray, startIndex);
     }
 
+    private static final String PROCESSED_TXT = "dict_processed.txt";
+
     /**
      * ROOT b/  -- c$/   --  d/ e$/f/ -- #/   --  g/ h$/ ---- #/  ---- i$/ #/  --------- #/
      *
@@ -174,7 +169,7 @@ public class WordDictionary {
             Log.d(LOGTAG, "saveDictToFile final str: " + dicLineBuild);
 
             try {
-                File file = new File(Environment.getExternalStorageDirectory(), MAIN_PROCESSED);
+                File file = new File(Environment.getExternalStorageDirectory(), PROCESSED_TXT);
 
                 if (!file.exists()) {
                     file.createNewFile();
@@ -242,15 +237,15 @@ public class WordDictionary {
         saveDictToFile(childArray);
     }
 
-    public boolean loadDict(AssetManager assetManager) {
+    public boolean loadDict(DictStreamFetcher fetcher) {
         element = new Element((char) 0); // 创建一个根Element，只有一个，其他的Element全是其子孙节点
         InputStream is = null;
         try {
             long start = System.currentTimeMillis();
-            is = assetManager.open(MAIN_DICT);
+            is = fetcher.getDictStream();
 
             if (is == null) {
-                Log.e(LOGTAG, "Load asset file error:" + MAIN_DICT);
+                Log.e(LOGTAG, "Load main_dict asset file error:");
                 return false;
             }
 
@@ -278,10 +273,9 @@ public class WordDictionary {
                 entry.setValue((Math.log(entry.getValue() / total)));
                 minFreq = Math.min(entry.getValue(), minFreq);
             }
-            Log.d(LOGTAG, String.format("main dict load finished, time elapsed %d ms",
-                System.currentTimeMillis() - s));
+            Log.d(LOGTAG, String.format("main dict load finished, time elapsed %d ms", System.currentTimeMillis() - s));
         } catch (IOException e) {
-            Log.e(LOGTAG, String.format("%s load failure!", MAIN_DICT));
+            Log.e(LOGTAG, "MAIN_DICT load failure!");
             return false;
         } finally {
             try {
@@ -289,8 +283,7 @@ public class WordDictionary {
                     is.close();
                 }
             } catch (IOException e) {
-                Log.e(LOGTAG, String.format("%s close failure!", MAIN_DICT));
-                return false;
+                Log.e(LOGTAG, "MAIN_DICT close failure!");
             }
         }
 
@@ -329,20 +322,19 @@ public class WordDictionary {
         }
     }
 
-    public List<String> getStrArrayFromFile(AssetManager assetManager) {
+    public List<String> getStrArrayFromFile(DictStreamFetcher fetcher) {
         List<String> strArray;
 
         InputStream is = null;
         try {
-            is = assetManager.open(OUTFILE);
+            is = fetcher.getProcessedDictStream();
 
             if (is == null) {
-                Log.e(LOGTAG, "Load asset file error:" + OUTFILE);
+                Log.e(LOGTAG, "Load processed dict asset file error:");
                 return null;
             }
 
-            BufferedReader br = new BufferedReader(
-                new InputStreamReader(is, StandardCharsets.UTF_8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 
             // 第一行是字典文件
             String dictLine = br.readLine();

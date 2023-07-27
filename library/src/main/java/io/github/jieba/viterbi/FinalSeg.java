@@ -2,9 +2,9 @@ package io.github.jieba.viterbi;
 
 import static io.github.jieba.Utility.LOGTAG;
 
-import android.content.res.AssetManager;
 import android.util.Log;
 import io.github.jieba.CharacterUtil;
+import io.github.jieba.DictStreamFetcher;
 import io.github.jieba.Node;
 import io.github.jieba.Pair;
 import java.io.BufferedReader;
@@ -21,8 +21,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 
 public class FinalSeg {
-
-    private static final String PROB_EMIT = "jieba/prob_emit.txt";
 
     private static final char[] states = new char[]{'B', 'M', 'E', 'S'};
 
@@ -41,15 +39,15 @@ public class FinalSeg {
     private FinalSeg() {
     }
 
-    public synchronized static FinalSeg getInstance(AssetManager assetManager) {
+    public synchronized static FinalSeg getInstance(DictStreamFetcher fetcher) {
         if (null == singleInstance) {
             singleInstance = new FinalSeg();
-            singleInstance.loadModel(assetManager);
+            singleInstance.loadModel(fetcher);
         }
         return singleInstance;
     }
 
-    private void loadModel(AssetManager assetManager) {
+    private void loadModel(DictStreamFetcher assetManager) {
         long s = System.currentTimeMillis();
         prevStatus = new HashMap<Character, char[]>();
         prevStatus.put('B', new char[]{'E', 'S'});
@@ -84,10 +82,10 @@ public class FinalSeg {
         InputStream is = null;
 
         try {
-            is = assetManager.open(PROB_EMIT);
+            is = assetManager.getProbStream();
 
             if (is == null) {
-                Log.e(LOGTAG, "Load asset file error:" + PROB_EMIT);
+                Log.e(LOGTAG, "Load prob_emit asset file error:");
                 return;
             }
 
@@ -106,14 +104,14 @@ public class FinalSeg {
                 }
             }
         } catch (IOException e) {
-            Log.e(LOGTAG, String.format(Locale.getDefault(), "%s: load model failure!", PROB_EMIT));
+            Log.e(LOGTAG, "prob_emit: load model failure!");
         } finally {
             try {
                 if (null != is) {
                     is.close();
                 }
             } catch (IOException e) {
-                Log.e(LOGTAG, String.format(Locale.getDefault(), "%s: close failure!", PROB_EMIT));
+                Log.e(LOGTAG, "prob_emit: close failure!");
             }
         }
         Log.d(LOGTAG,
@@ -151,8 +149,8 @@ public class FinalSeg {
     }
 
     /**
-     * 利用维特比算法计算对于一串单蹦个的字符，每个字符到下一个字符如何跳转，以实现整条路径的概率最大 例如：我  去   五  道   口 B   B   B   B   B M   M M   M   M E   E   E
-     * E   E S   S   S   S   S
+     * 利用维特比算法计算对于一串单蹦个的字符，每个字符到下一个字符如何跳转，以实现整条路径的概率最大 例如：我  去   五  道   口 B   B   B   B   B M   M M   M   M E   E   E E
+     * E S   S   S   S   S
      *
      * @param sentence
      * @param tokens

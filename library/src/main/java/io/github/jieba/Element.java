@@ -167,9 +167,9 @@ public class Element implements Comparable<Element>, Serializable {
         Character beginChar = new Character(charArray[begin]); // eg: 一
 
         // 字典中没有该字，则将其添加入字典
-//        if (!Utility.totalCharSet.contains(beginChar)) {
-//            Utility.totalCharSet.add(beginChar);
-//        }
+        // if (!Utility.totalCharSet.contains(beginChar)) {
+        //     Utility.totalCharSet.add(beginChar);
+        // }
 
         Character keyChar = beginChar;
 

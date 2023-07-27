@@ -54,7 +54,7 @@ public class CharacterUtil {
         } else if (input > 65280 && input < 65375) {
             return (char) (input - 65248);
         } else if (input >= 'A' && input <= 'Z') {
-            return (input += 32);
+            return (char) (input + 32);
         }
         return input;
     }

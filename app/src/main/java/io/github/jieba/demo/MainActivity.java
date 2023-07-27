@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<String> wordList = JiebaSegmenter.getJiebaSegmenterSingleton()
+                ArrayList<String> wordList = JiebaSegmenter.getInstance()
                     .getDividedString(editText.getText().toString());
 
                 CustomBottomSheetDialog sheetDialog = new CustomBottomSheetDialog(
