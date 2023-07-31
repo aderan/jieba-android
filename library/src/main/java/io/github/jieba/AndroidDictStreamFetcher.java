@@ -25,12 +25,17 @@ public class AndroidDictStreamFetcher implements DictStreamFetcher {
     }
 
     @Override
+    public InputStream getUserDictStream() throws IOException {
+        return null;
+    }
+
+    @Override
     public InputStream getProcessedDictStream() throws IOException {
         return assetManager.open(PROCESSED_DICT);
     }
 
     @Override
-    public InputStream getProbStream() throws IOException {
+    public InputStream getEmitProbStream() throws IOException {
         return assetManager.open(PROB_EMIT);
     }
 }

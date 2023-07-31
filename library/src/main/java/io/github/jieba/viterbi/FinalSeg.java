@@ -82,7 +82,7 @@ public class FinalSeg {
         InputStream is = null;
 
         try {
-            is = fetcher.getProbStream();
+            is = fetcher.getEmitProbStream();
 
             if (is == null) {
                 Log.e(LOGTAG, "Load prob_emit asset file error:");

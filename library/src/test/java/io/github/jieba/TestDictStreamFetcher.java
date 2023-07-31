@@ -18,7 +18,7 @@ public class TestDictStreamFetcher implements DictStreamFetcher {
     }
 
     @Override
-    public InputStream getProbStream() throws IOException {
+    public InputStream getEmitProbStream() throws IOException {
         return Files.newInputStream(new File("src/main/assets/jieba/prob_emit.txt").toPath());
     }
 }

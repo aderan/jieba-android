@@ -12,7 +12,9 @@ public interface DictStreamFetcher {
 
     InputStream getDictStream() throws IOException;
 
+    InputStream getUserDictStream() throws IOException;
+
     InputStream getProcessedDictStream() throws IOException;
 
-    InputStream getProbStream() throws IOException;
+    InputStream getEmitProbStream() throws IOException;
 }
